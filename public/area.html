@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Area</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script> -->
+</head>
+<body>
+    <h1>AREA</h1>
+    <button id="logout">LOGOUT</button>
+</body>
+<script>
+
+    window.onload = () => {
+        if(window.localStorage.getItem('amp-admin-mac')!==null && window.sessionStorage.getItem('amp-admin-pvt')!==null) {
+            let mac = window.localStorage.getItem('amp-admin-mac');
+            let pvt = window.sessionStorage.getItem('amp-admin-pvt');
+            
+            const pageReq = new XMLHttpRequest();
+            let url = 'pvt=' + btoa(pvt) + '&mac=' + mac;
+            pageReq.open('POST', `/u/login/p?${url}`, true);
+            pageReq.send();
+            pageReq.onreadystatechange = () => {
+                if(pageReq.readyState===4 && pageReq.status===200) {
+                    let pageRes = JSON.parse(pageReq.response).verify;
+                    if(pageRes) {
+                        // correct ID
+                    } else {
+                        // wrong ID
+                        window.location = '/';
+                    }
+                }
+            }
+        } else {
+            window.location = '/';
+        }
+    }
+
+    document.getElementById("logout").onclick = () => {
+        let mac = window.localStorage.getItem('amp-admin-mac');
+        let index = window.sessionStorage.getItem('amp-admin-index');
+
+        window.sessionStorage.removeItem('amp-admin-pvt');
+        window.sessionStorage.removeItem('amp-admin-pub');
+
+        const logoutReq = new XMLHttpRequest();
+        logoutReq.open('POST', '/u/logout?mac=' + mac, true);
+        logoutReq.send();
+
+        window.location = '/';
+    }
+</script>
+</html>
